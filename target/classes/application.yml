@@ -2,22 +2,21 @@ spring:
   application:
     name: aec-auth
   datasource:
-    url:      ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/aec}
-    username: ${DATASOURCE_USER:aec}
-    password: ${DATASOURCE_PASS:2412}
+    url: ${DATASOURCE_URL} # Sin valor por defecto
+    username: ${DATASOURCE_USER} # Sin valor por defecto
+    password: ${DATASOURCE_PASS} # Sin valor por defecto
   jpa:
     hibernate:
-      ddl-auto: ${DDL_AUTO:update}
+      ddl-auto: ${DDL_AUTO:update} # 'update' puede ser un valor por defecto seguro para desarrollo local si es lo que usas
 
 jwt:
-  secret:    ${JWT_SECRET:Cuetm0BgR8Bjk8Mo2OXtOlOxkc/N1K2g3vKx82o8Lcw=}
-  accessMs:  ${JWT_ACCESS_MS:3600000}
-  refreshMs: ${JWT_REFRESH_MS:86400000}
+  secret: ${JWT_SECRET} # ¡MUY IMPORTANTE! Sin valor por defecto
+  accessMs: ${JWT_ACCESS_MS:3600000} # Puedes mantener valores por defecto para duraciones si son consistentes
+  refreshMs: ${JWT_REFRESH_MS:86400000} # Puedes mantener valores por defecto para duraciones si son consistentes
 
 server:
-  port: ${SERVER_PORT:8082}
+  port: ${SERVER_PORT:8082} # Un valor por defecto para el puerto está bien para desarrollo local
 
-spring:
-  docker:
-    compose:
-      enabled: false
+docker:
+  compose:
+    enabled: false
