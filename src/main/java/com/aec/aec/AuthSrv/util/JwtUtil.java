@@ -2,7 +2,6 @@ package com.aec.aec.AuthSrv.util;
 import org.springframework.security.core.userdetails.UserDetails;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

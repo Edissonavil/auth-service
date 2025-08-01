@@ -1,14 +1,18 @@
 package com.aec.aec.AuthSrv.config;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.aec.aec.AuthSrv.service.CustomUserDetailsService;
@@ -27,12 +31,9 @@ public class SecurityConfig {
                                            AuthenticationManager authManager,
                                            DaoAuthenticationProvider authProvider) throws Exception {
         http
-          // 1) Habilitamos CORS (lee nuestro CorsConfigurationSource)
-          .cors().and()
-
+          .cors(cors -> cors.configurationSource(corsConfigurationSource()))
           // 2) Deshabilitamos CSRF (API REST stateless)
-          .csrf().disable()
-
+          .csrf(csrf -> csrf.disable())
           // 3) Configuramos las rutas públicas y preflight
           .authorizeHttpRequests(auth -> auth
               // Login y refresh sin token
@@ -42,12 +43,10 @@ public class SecurityConfig {
               // El resto requiere JWT
               .anyRequest().authenticated()
           )
-
           // 4) Stateless
           .sessionManagement(sm ->
               sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
           )
-
           // 5) Proveedor de autenticación (tu DaoAuthenticationProvider + filtro JWT)
           .authenticationProvider(authProvider);
 
@@ -70,6 +69,24 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration cfg = new CorsConfiguration();
+        cfg.setAllowedOrigins(List.of(
+            "https://gateway-production-129e.up.railway.app",
+            "https://aecf-production.up.railway.app",
+            "https://file-service-production-31f3.up.railway.app",
+            "https://aecblock.com"
+        ));
+        cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        cfg.setAllowedHeaders(List.of("*"));
+        cfg.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", cfg);
+        return source;
     }
 }
 
